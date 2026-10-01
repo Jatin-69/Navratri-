@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ participant.name }}</h1>
+<p>{{ participant.participant_code }}</p>
+<p>{{ participant.phone }}</p>
+{% if participant.photo %}<img src="{{ participant.photo.url }}" alt="photo" width="120" />{% endif %}
+<p>QR Active: {{ participant.qr_active }}</p>
+<a href="{% url 'qr:view' participant.id %}">View QR</a> |
+<a href="{% url 'qr:download' participant.id %}">Download QR</a>
+<form method="post" action="{% url 'qr:regenerate' participant.id %}">{% csrf_token %}<button>Regenerate QR</button></form>
+<div>
+{% for d in days %}<span>Day {{ d.day }} {% if d.claimed %}✅{% else %}❌{% endif %}</span><br />{% endfor %}
+</div>
+{% endblock %}

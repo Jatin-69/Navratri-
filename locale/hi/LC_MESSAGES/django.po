@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: navratri\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Login"
+msgstr "लॉगिन"
+
+msgid "Scanner"
+msgstr "स्कैनर"
+
+msgid "Participant verified."
+msgstr "प्रतिभागी सत्यापित है।"
+
+msgid "Prop distributed successfully."
+msgstr "सामग्री सफलतापूर्वक वितरित की गई।"

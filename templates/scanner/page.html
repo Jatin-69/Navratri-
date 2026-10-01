@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-xl mb-3">Scanner</h1>
+<div id="reader" class="mb-3"></div>
+<div id="status" class="p-3 bg-yellow-100">Waiting for scan...</div>
+<button id="give-prop" class="bg-green-600 text-white px-4 py-2 mt-3 hidden">GIVE PROP</button>
+<button id="scan-next" class="bg-blue-600 text-white px-4 py-2 mt-3">Scan next</button>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
+<script>
+let html5QrCode;
+let lastClaimRef = null;
+const statusBox = document.getElementById('status');
+const givePropBtn = document.getElementById('give-prop');
+const csrf = '{{ csrf_token }}';
+
+function render(msg, cls='bg-blue-100') {
+  statusBox.className = 'p-3 ' + cls;
+  statusBox.textContent = msg;
+}
+
+async function scanToken(token) {
+  const res = await fetch('{% url "scanner:scan_api" %}', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+    body: JSON.stringify({token})
+  });
+  const data = await res.json();
+  givePropBtn.classList.add('hidden');
+  if (data.code === 'NOT_COLLECTED') {
+    lastClaimRef = data.claim_ref;
+    givePropBtn.classList.remove('hidden');
+    render(`${data.participant.name} Day ${data.navratri_day} verified. Click GIVE PROP.`, 'bg-blue-100');
+  } else if (data.code === 'ALREADY_CLAIMED') {
+    render(data.message, 'bg-red-100');
+  } else {
+    render(data.message || 'Invalid QR code.', 'bg-red-100');
+  }
+}
+
+async function claimCurrent() {
+  if (!lastClaimRef) return;
+  const res = await fetch('{% url "scanner:claim_api" %}', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+    body: JSON.stringify({claim_ref: lastClaimRef})
+  });
+  const data = await res.json();
+  if (data.code === 'OK') {
+    render(`Prop distributed successfully: ${data.participant_name} Day ${data.navratri_day}`, 'bg-green-100');
+  } else {
+    render(data.message || 'Unable to claim.', 'bg-red-100');
+  }
+  givePropBtn.classList.add('hidden');
+  lastClaimRef = null;
+}
+
+function startScanner() {
+  html5QrCode = new Html5Qrcode('reader');
+  html5QrCode.start({facingMode: 'environment'}, {fps: 10, qrbox: 250}, async (decodedText) => {
+    await html5QrCode.pause(true);
+    await scanToken(decodedText);
+  }, () => {});
+}
+
+givePropBtn.addEventListener('click', claimCurrent);
+document.getElementById('scan-next').addEventListener('click', async () => {
+  if (html5QrCode) {
+    await html5QrCode.resume();
+    render('Ready for next scan...', 'bg-yellow-100');
+  }
+});
+
+window.addEventListener('load', startScanner);
+</script>
+{% endblock %}
