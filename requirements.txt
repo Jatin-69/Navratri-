@@ -1,8 +1,8 @@
-Django==5.1.10
+Django==5.1.14
 psycopg[binary]==3.2.3
-Pillow==10.4.0
+Pillow==12.3.0
 segno==1.6.1
-cryptography==43.0.1
+cryptography==50.0.0
 django-environ==0.11.2
 django-axes==7.0.2
 django-ratelimit==4.1.0
