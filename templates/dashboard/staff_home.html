@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl">Staff Dashboard</h1>
+<p>Today's Distribution - {% if day_number %}Day {{ day_number }}{% else %}Inactive{% endif %}</p>
+<p>Collected: {{ collected_today }}</p>
+<a class="bg-blue-600 text-white px-4 py-2 inline-block" href="{% url 'scanner:page' %}">SCAN QR</a>
+{% endblock %}

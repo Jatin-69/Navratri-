@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-xl">Participants</h1>
+<form method="get"><input type="text" name="q" value="{{ query }}" /><button>Search</button></form>
+<a href="{% url 'participants:create' %}">Register Participant</a>
+<ul>
+{% for participant in page_obj %}
+<li><a href="{% url 'participants:detail' participant.id %}">{{ participant.participant_code }} - {{ participant.name }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl">Admin Dashboard</h1>
+<p>Today: {% if day_number %}Day {{ day_number }}{% else %}Outside distribution window{% endif %}</p>
+<p>Total Participants: {{ total }}</p>
+<p>Collected Today: {{ collected_today }}</p>
+<p>Pending Today: {{ pending_today }}</p>
+<p>Collection Rate: {{ collection_rate|floatformat:1 }}%</p>
+<a href="{% url 'participants:list' %}">Participants</a> |
+<a href="{% url 'events:config' %}">Event Config</a> |
+<a href="{% url 'reports:participants' %}">Participant CSV</a>
+{% endblock %}
