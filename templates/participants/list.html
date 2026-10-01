@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-4"><h1 class="text-xl font-bold">Participants</h1><a class="bg-blue-600 text-white px-3 py-2 rounded" href="{% url 'participants:create' %}">Register</a></div>
+<form class="mb-3"><input class="border p-2" name="q" value="{{ query }}" placeholder="Search"/><button class="ml-2 bg-gray-800 text-white px-3 py-2 rounded">Search</button></form>
+<table class="w-full bg-white rounded">
+<tr><th class="p-2">Code</th><th>Name</th><th>Phone</th><th></th></tr>
+{% for p in page_obj %}<tr><td class="p-2">{{ p.participant_code }}</td><td class="p-2">{{ p.name }}</td><td class="p-2">{{ p.masked_phone }}</td><td class="p-2"><a class="text-blue-600" href="{% url 'participants:detail' p.id %}">View</a></td></tr>{% empty %}<tr><td colspan="4" class="p-2">No records</td></tr>{% endfor %}
+</table>
+{% endblock %}

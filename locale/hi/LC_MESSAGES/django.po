@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: hi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Login"
+msgstr "लॉगिन"
+
+msgid "Scanner"
+msgstr "स्कैनर"
+
+msgid "Participants"
+msgstr "प्रतिभागी"

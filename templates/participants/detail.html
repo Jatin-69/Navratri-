@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-white p-6 rounded shadow">
+<h1 class="text-xl font-bold mb-2">{{ participant.name }} ({{ participant.participant_code }})</h1>
+<p>Phone: {{ participant.phone }}</p>
+<div class="my-3 space-x-3">
+  <a class="text-blue-600" href="{% url 'participants:qr' participant.id %}" target="_blank">View QR</a>
+  <a class="text-blue-600" href="{% url 'participants:qr_download' participant.id %}">Download QR</a>
+  <a class="text-amber-700" href="{% url 'participants:qr_regenerate' participant.id %}">Regenerate QR</a>
+  <a class="text-blue-600" href="{% url 'participants:edit' participant.id %}">Edit</a>
+</div>
+<div class="grid grid-cols-3 md:grid-cols-9 gap-2">{% for d in day_grid %}<div class="p-2 text-center rounded {% if d.claimed %}bg-green-100{% else %}bg-red-100{% endif %}">Day {{ d.day }}</div>{% endfor %}</div>
+</div>
+{% endblock %}

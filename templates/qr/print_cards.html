@@ -1,0 +1,8 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Print QR Cards</title>
+<style>
+body{font-family:Arial,sans-serif}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{border:1px solid #999;padding:10px}.card img{width:130px;height:130px}@media print{.card{page-break-inside:avoid}}
+</style>
+</head><body>
+<div class="grid">{% for card in cards %}<div class="card"><h4>NAVRATRI 2026</h4><img src="{{ card.qr_data_url }}"><p>Name: {{ card.participant.name }}</p><p>Participant ID: {{ card.participant.participant_code }}</p><small>Please present this QR at the distribution counter.</small></div>{% endfor %}</div>
+</body></html>

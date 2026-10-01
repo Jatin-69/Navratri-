@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block extra_head %}<script src="https://unpkg.com/html5-qrcode" defer></script>{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto">
+  <h1 class="text-xl font-bold mb-3">Scanner</h1>
+  <div id="reader" class="bg-white rounded p-2"></div>
+  <button id="scan-next" class="hidden mt-3 w-full bg-blue-600 text-white py-3 rounded">Scan next</button>
+  <div id="result" class="mt-3 p-3 rounded bg-yellow-100">Waiting for scan...</div>
+</div>
+<script>
+const csrf = '{{ csrf_token }}';
+let lastSignedRef = null;
+let scanner = null;
+const result = document.getElementById('result');
+const nextBtn = document.getElementById('scan-next');
+
+function show(msg, cls='bg-yellow-100'){ result.className='mt-3 p-3 rounded '+cls; result.innerHTML = msg; }
+function stopScanner(){ if(scanner){ scanner.pause(true); nextBtn.classList.remove('hidden'); } }
+function startScanner(){ if(scanner){ scanner.resume(); nextBtn.classList.add('hidden'); show('Waiting for scan...'); } }
+
+async function claim(){
+  if(!lastSignedRef) return;
+  const body = new URLSearchParams({signed_ref:lastSignedRef});
+  const res = await fetch('{% url "scanner:claim_api" %}', {method:'POST', headers:{'X-CSRFToken':csrf}, body});
+  const data = await res.json();
+  if(data.code === 'OK'){ show(`${data.message} - Day ${data.day}`, 'bg-green-100'); }
+  else { show(data.message || 'Failed', 'bg-red-100'); }
+}
+
+function onScanSuccess(decodedText){
+  fetch('{% url "scanner:scan_api" %}', {
+    method:'POST', headers:{'X-CSRFToken':csrf}, body:new URLSearchParams({token:decodedText})
+  }).then(r => r.json()).then(data => {
+    if(data.code === 'NOT_COLLECTED'){
+      lastSignedRef = data.signed_ref;
+      show(`<div class='font-semibold'>${data.participant.name}</div><div>Day ${data.day}</div><button id='claim-btn' class='mt-2 bg-green-600 text-white px-4 py-2 rounded w-full'>GIVE PROP</button>`, 'bg-blue-100');
+      document.getElementById('claim-btn').addEventListener('click', claim);
+      stopScanner();
+    } else if(data.code === 'ALREADY_CLAIMED'){
+      show(data.message || 'Already claimed', 'bg-red-100');
+      stopScanner();
+    } else {
+      show(data.message || 'Invalid QR code', 'bg-red-100');
+      stopScanner();
+    }
+  }).catch(() => show('Unable to connect to the server. Please try again.', 'bg-red-100'));
+}
+
+window.addEventListener('load', async () => {
+  try {
+    scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 250, rememberLastUsedCamera: true, supportedScanTypes:[0] }, false);
+    scanner.render(onScanSuccess, () => {});
+    nextBtn.addEventListener('click', startScanner);
+  } catch {
+    show('Camera access is required to scan QR codes.', 'bg-red-100');
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-xl font-bold">Admin Dashboard</h1>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-4">
+  <div class="bg-white p-3 rounded">Total {{ total_participants }}</div>
+  <div class="bg-white p-3 rounded">Collected {{ today_claims }}</div>
+  <div class="bg-white p-3 rounded">Pending {{ pending }}</div>
+  <div class="bg-white p-3 rounded">Rate {{ collection_rate|floatformat:1 }}%</div>
+</div>
+<div class="space-x-3 mb-4">
+  <a class="text-blue-600" href="{% url 'reports:participants_csv' %}">Participants CSV</a>
+  <a class="text-blue-600" href="{% url 'reports:distribution_csv' %}">Distribution CSV</a>
+  <a class="text-blue-600" href="{% url 'accounts:staff_create' %}">Create Staff</a>
+</div>
+<table class="bg-white w-full rounded"><tr><th>Day</th><th>Total</th></tr>{% for row in day_stats %}<tr><td class="p-2">{{ row.navratri_day }}</td><td class="p-2">{{ row.total }}</td></tr>{% endfor %}</table>
+{% endblock %}

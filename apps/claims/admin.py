@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Claim, QRRegenerationLog
+
+admin.site.register(Claim)
+admin.site.register(QRRegenerationLog)
